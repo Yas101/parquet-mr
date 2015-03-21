@@ -345,8 +345,13 @@ public class ParquetInputFormat<T> extends FileInputFormat<Void, T> {
     for (FileStatus file : files) {
       if (file.isDir()) {
         Path p = file.getPath();
-        FileSystem fs = p.getFileSystem(conf);
-        staticAddInputPathRecursively(result, fs, p, hiddenFileFilter);
+        try{
+          FileSystem fs = p.getFileSystem(conf);
+          staticAddInputPathRecursively(result, fs, p, hiddenFileFilter);
+        }catch (Exception e){
+          LOG.error(" Error accessing file system "+p.getName(),e);
+        }
+       
       } else {
         result.add(file);
       }
